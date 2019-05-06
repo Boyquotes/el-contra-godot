@@ -8,12 +8,16 @@ enum States {
 	RUNNING,
 	RUNNING_UP,
 	RUNNING_DOWN,
-	JUMPING
+	JUMPING,
+	WATER_RUNNING,
+	WATER_DOWN,
+	WATER_IDLE
 }
 
 var speed = Vector2()
 var can_jump = false
 var on_the_ground = false
+var on_the_water = false
 var state = States.IDLE
 
 onready var anim = get_node("AnimationPlayer")
@@ -28,64 +32,88 @@ func _ready():
 func _physics_process(delta):
 	speed.y += Gravity
 	
-	if (Input.is_action_pressed("left")):
+	if ((state == States.GROUND or state == States.WATER_DOWN) and Input.is_action_pressed("left")):
+		get_node("Sprite").flip_h = false
+	elif ((state == States.GROUND or state == States.WATER_DOWN) and Input.is_action_pressed("right")):
+		get_node("Sprite").flip_h = true
+	elif (state != States.GROUND and state != States.WATER_DOWN and Input.is_action_pressed("left")):
 		speed.x = -SpeedH
 		get_node("Sprite").flip_h = false
 		if (state != States.JUMPING):
-			if (Input.is_action_pressed("up")):
-				state = States.RUNNING_UP
-			elif (Input.is_action_pressed("down")):
-				state = States.RUNNING_DOWN
+			if on_the_water:
+				state = States.WATER_RUNNING
 			else:
-				state = States.RUNNING
-	elif (Input.is_action_pressed("right")):
+				if (Input.is_action_pressed("up")):
+					state = States.RUNNING_UP
+				elif (Input.is_action_pressed("down")):
+					state = States.RUNNING_DOWN
+				else:
+					state = States.RUNNING
+	elif (state != States.GROUND and state != States.WATER_DOWN and Input.is_action_pressed("right")):
 		speed.x = SpeedH
 		get_node("Sprite").flip_h = true
 		if (state != States.JUMPING):
-			if (Input.is_action_pressed("up")):
-				state = States.RUNNING_UP
-			elif (Input.is_action_pressed("down")):
-				state = States.RUNNING_DOWN
+			if on_the_water:
+				state = States.WATER_RUNNING
 			else:
-				state = States.RUNNING
-	elif (on_the_ground and Input.is_action_pressed("up")):
+				if (Input.is_action_pressed("up")):
+					state = States.RUNNING_UP
+				elif (Input.is_action_pressed("down")):
+					state = States.RUNNING_DOWN
+				else:
+					state = States.RUNNING
+	elif (!on_the_water and on_the_ground and Input.is_action_pressed("up")):
 		speed.x = 0
 		if (state != States.JUMPING):
 			state = States.IDLE_UP
 	elif (on_the_ground and Input.is_action_pressed("down")):
 		speed.x = 0
 		if (state != States.JUMPING):
-			state = States.GROUND
+			if on_the_water:
+				state = States.WATER_DOWN
+			else:
+				state = States.GROUND
 	else:
 		speed.x = 0
 		if (state != States.JUMPING):
-			state = States.IDLE
-		
-	if (can_jump and Input.is_action_pressed("jump")):
+			if on_the_water:
+				state = States.WATER_IDLE
+			else:
+				state = States.IDLE
+	
+	if (state == States.GROUND and Input.is_action_pressed("jump")):
+		position.y += 2
+		state = States.IDLE
+	elif (can_jump and Input.is_action_pressed("jump")):
 		can_jump = false
 		state = States.JUMPING
 		speed.y -= JumpSpeed
 	
 	# No multiplico por delta ya que move_and_slite no lo requiere
 	var movimiento = speed
-	
 	move_and_slide(movimiento)
 	
 	# Colisión
 	var other = null
+	on_the_ground = false
+	on_the_water = false
+	can_jump = false
 	if (get_slide_count() > 0):
 		other = get_slide_collision(get_slide_count()-1).collider
-		if (other.is_in_group("floor")):
+		if (other.is_in_group("water")):
 			can_jump = true
 			on_the_ground = true
+			on_the_water = true
 			speed.y = 0
 			if (state == States.JUMPING):
-				# Parche para evitar glitches por cambio de collider
-				# Debería pararse cuándo está por llegar a tierra (raycast?)
-				global_position.y -= 10
 				state = States.NONE
-		else:
-			on_the_ground = false
+		elif (other.is_in_group("floor")):
+			can_jump = true
+			on_the_ground = true
+			on_the_water = false
+			speed.y = 0
+			if (state == States.JUMPING):
+				state = States.NONE
 	
 	# Animation
 	match state:
@@ -103,6 +131,12 @@ func _physics_process(delta):
 			anim.play("fire_down")
 		States.JUMPING:
 			anim.play("jump")
+		States.WATER_RUNNING:
+			anim.play("water_walk")
+		States.WATER_DOWN:
+			anim.play("under_water")
+		States.WATER_IDLE:
+			anim.play("water_idle")
 	
 	
 	
