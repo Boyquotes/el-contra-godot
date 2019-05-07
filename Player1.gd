@@ -20,15 +20,17 @@ var on_the_ground = false
 var on_solid_floor = false
 var on_the_water = false
 var state = States.IDLE
+var main
 
 onready var anim = get_node("AnimationPlayer")
 
 export (float) var Gravity = 5
 export (float) var SpeedH = 100
 export (float) var JumpSpeed = 210
+export (PackedScene) var Bullet
 
 func _ready():
-	pass
+	main = get_tree().get_nodes_in_group("main")[0]
 
 func _physics_process(delta):
 	speed.y += Gravity
@@ -82,6 +84,11 @@ func _physics_process(delta):
 			else:
 				state = States.IDLE
 	
+	if Input.is_action_pressed("shoot"):
+		var bullet = Bullet.instance()
+		bullet.global_position = get_node("bullet_point").global_position
+		main.add_child(bullet)
+	
 	if (state == States.GROUND and !on_solid_floor and Input.is_action_pressed("jump")):
 		position.y += 2
 		state = States.IDLE
@@ -97,7 +104,6 @@ func _physics_process(delta):
 	# Colisión
 	var other = null
 	if (get_slide_count() > 0):
-		print("si")
 		other = get_slide_collision(get_slide_count()-1).collider
 		if (other.is_in_group("water")):
 			can_jump = true
@@ -144,6 +150,3 @@ func _physics_process(delta):
 			anim.play("under_water")
 		States.WATER_IDLE:
 			anim.play("water_idle")
-	
-	print_debug(state)
-	

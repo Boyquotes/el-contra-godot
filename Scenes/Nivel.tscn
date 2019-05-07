@@ -1,9 +1,9 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://Sprites/7680.png" type="Texture" id=1]
 [ext_resource path="res://Player1.gd" type="Script" id=2]
-[ext_resource path="res://Sprites/Player1.png" type="Texture" id=3]
-[ext_resource path="res://Sprites/Bullets.png" type="Texture" id=4]
+[ext_resource path="res://Scenes/BulletBasic.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Sprites/Player1.png" type="Texture" id=4]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 367.552, 8.28192 )
@@ -27,7 +27,7 @@ extents = Vector2( 31.0992, 5.29573 )
 extents = Vector2( 871.916, 6.10854 )
 
 [sub_resource type="RectangleShape2D" id=8]
-extents = Vector2( 5.375, 6.17576 )
+extents = Vector2( 5.375, 16.372 )
 
 [sub_resource type="Animation" id=9]
 length = 0.3
@@ -42,7 +42,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 1,
-"values": [ ExtResource( 3 ) ]
+"values": [ ExtResource( 4 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("Sprite:vframes")
@@ -118,7 +118,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 1,
-"values": [ ExtResource( 3 ) ]
+"values": [ ExtResource( 4 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("Sprite:vframes")
@@ -194,7 +194,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 1,
-"values": [ ExtResource( 3 ) ]
+"values": [ ExtResource( 4 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("Sprite:vframes")
@@ -270,7 +270,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 1,
-"values": [ ExtResource( 3 ) ]
+"values": [ ExtResource( 4 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("Sprite:vframes")
@@ -346,7 +346,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 1,
-"values": [ ExtResource( 3 ) ]
+"values": [ ExtResource( 4 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("Sprite:vframes")
@@ -422,7 +422,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 1,
-"values": [ ExtResource( 3 ) ]
+"values": [ ExtResource( 4 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("Sprite:vframes")
@@ -498,7 +498,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 1,
-"values": [ ExtResource( 3 ) ]
+"values": [ ExtResource( 4 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("Sprite:vframes")
@@ -574,7 +574,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 1,
-"values": [ ExtResource( 3 ) ]
+"values": [ ExtResource( 4 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("Sprite:vframes")
@@ -650,7 +650,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 1,
-"values": [ ExtResource( 3 ) ]
+"values": [ ExtResource( 4 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("Sprite:vframes")
@@ -726,7 +726,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0 ),
 "transitions": PoolRealArray( 1 ),
 "update": 1,
-"values": [ ExtResource( 3 ) ]
+"values": [ ExtResource( 4 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("Sprite:vframes")
@@ -789,14 +789,12 @@ tracks/5/keys = {
 "values": [ Vector2( 0, 17.706 ) ]
 }
 
-[sub_resource type="RectangleShape2D" id=19]
-extents = Vector2( 3.01453, 2.84041 )
-
-[node name="Nivel" type="Node2D"]
+[node name="Nivel" type="Node2D" groups=[
+"main",
+]]
 
 [node name="Background" type="Sprite" parent="."]
 editor/display_folded = true
-visible = false
 position = Vector2( 1867.3, 51.0651 )
 scale = Vector2( 1.2, 1.2 )
 texture = ExtResource( 1 )
@@ -914,23 +912,22 @@ shape = SubResource( 7 )
 [node name="Player1" type="KinematicBody2D" parent="." groups=[
 "player",
 ]]
-editor/display_folded = true
-visible = false
 position = Vector2( 0, -23.883 )
 script = ExtResource( 2 )
 __meta__ = {
 "_edit_group_": true
 }
+Bullet = ExtResource( 3 )
 
 [node name="Sprite" type="Sprite" parent="Player1"]
-texture = ExtResource( 3 )
+texture = ExtResource( 4 )
 flip_h = true
 vframes = 4
 hframes = 10
-frame = 23
+frame = 1
 
 [node name="Collider" type="CollisionShape2D" parent="Player1"]
-position = Vector2( 0, 17.706 )
+position = Vector2( 0, 7.41563 )
 shape = SubResource( 8 )
 
 [node name="Camera2D" type="Camera2D" parent="Player1"]
@@ -951,12 +948,5 @@ anims/under_water = SubResource( 16 )
 anims/water_idle = SubResource( 17 )
 anims/water_walk = SubResource( 18 )
 
-[node name="Bullet" type="KinematicBody2D" parent="."]
-
-[node name="Sprite" type="Sprite" parent="Bullet"]
-texture = ExtResource( 4 )
-vframes = 2
-hframes = 7
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Bullet"]
-shape = SubResource( 19 )
+[node name="bullet_point" type="Position2D" parent="Player1"]
+position = Vector2( 10.69, 0.93 )
