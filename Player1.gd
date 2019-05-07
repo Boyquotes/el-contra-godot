@@ -17,6 +17,7 @@ enum States {
 var speed = Vector2()
 var can_jump = false
 var on_the_ground = false
+var on_solid_floor = false
 var on_the_water = false
 var state = States.IDLE
 
@@ -32,11 +33,7 @@ func _ready():
 func _physics_process(delta):
 	speed.y += Gravity
 	
-	if ((state == States.GROUND or state == States.WATER_DOWN) and Input.is_action_pressed("left")):
-		get_node("Sprite").flip_h = false
-	elif ((state == States.GROUND or state == States.WATER_DOWN) and Input.is_action_pressed("right")):
-		get_node("Sprite").flip_h = true
-	elif (state != States.GROUND and state != States.WATER_DOWN and Input.is_action_pressed("left")):
+	if (state != States.GROUND and state != States.WATER_DOWN and Input.is_action_pressed("left")):
 		speed.x = -SpeedH
 		get_node("Sprite").flip_h = false
 		if (state != States.JUMPING):
@@ -62,17 +59,21 @@ func _physics_process(delta):
 					state = States.RUNNING_DOWN
 				else:
 					state = States.RUNNING
-	elif (!on_the_water and on_the_ground and Input.is_action_pressed("up")):
-		speed.x = 0
-		if (state != States.JUMPING):
-			state = States.IDLE_UP
 	elif (on_the_ground and Input.is_action_pressed("down")):
 		speed.x = 0
+		if Input.is_action_pressed("left"):
+			get_node("Sprite").flip_h = false
+		elif Input.is_action_pressed("right"):
+			get_node("Sprite").flip_h = true
 		if (state != States.JUMPING):
 			if on_the_water:
 				state = States.WATER_DOWN
 			else:
 				state = States.GROUND
+	elif (!on_the_water and on_the_ground and Input.is_action_pressed("up")):
+		speed.x = 0
+		if (state != States.JUMPING):
+			state = States.IDLE_UP
 	else:
 		speed.x = 0
 		if (state != States.JUMPING):
@@ -81,10 +82,10 @@ func _physics_process(delta):
 			else:
 				state = States.IDLE
 	
-	if (state == States.GROUND and Input.is_action_pressed("jump")):
+	if (state == States.GROUND and !on_solid_floor and Input.is_action_pressed("jump")):
 		position.y += 2
 		state = States.IDLE
-	elif (can_jump and Input.is_action_pressed("jump")):
+	elif (can_jump and (on_the_ground or on_the_water) and Input.is_action_pressed("jump")):
 		can_jump = false
 		state = States.JUMPING
 		speed.y -= JumpSpeed
@@ -95,10 +96,8 @@ func _physics_process(delta):
 	
 	# Colisión
 	var other = null
-	on_the_ground = false
-	on_the_water = false
-	can_jump = false
 	if (get_slide_count() > 0):
+		print("si")
 		other = get_slide_collision(get_slide_count()-1).collider
 		if (other.is_in_group("water")):
 			can_jump = true
@@ -111,10 +110,18 @@ func _physics_process(delta):
 			can_jump = true
 			on_the_ground = true
 			on_the_water = false
+			if (other.is_in_group("solid")):
+				on_solid_floor = true
+			else:
+				on_solid_floor = false
 			speed.y = 0
 			if (state == States.JUMPING):
 				state = States.NONE
-	
+	else:
+		on_the_ground = false
+		on_the_water = false
+		can_jump = false
+		
 	# Animation
 	match state:
 		States.IDLE:
@@ -138,5 +145,5 @@ func _physics_process(delta):
 		States.WATER_IDLE:
 			anim.play("water_idle")
 	
-	
+	print_debug(state)
 	
