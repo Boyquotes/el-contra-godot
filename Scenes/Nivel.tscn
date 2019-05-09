@@ -27,7 +27,7 @@ extents = Vector2( 31.0992, 5.29573 )
 extents = Vector2( 871.916, 6.10854 )
 
 [sub_resource type="RectangleShape2D" id=8]
-extents = Vector2( 5.375, 16.372 )
+extents = Vector2( 5.37462, 16.4573 )
 
 [sub_resource type="Animation" id=9]
 length = 0.3
@@ -794,7 +794,6 @@ tracks/5/keys = {
 ]]
 
 [node name="Background" type="Sprite" parent="."]
-editor/display_folded = true
 position = Vector2( 1867.3, 51.0651 )
 scale = Vector2( 1.2, 1.2 )
 texture = ExtResource( 1 )
@@ -804,6 +803,7 @@ texture = ExtResource( 1 )
 ]]
 editor/display_folded = true
 position = Vector2( -1328.69, -5.93383 )
+collision_layer = 4
 __meta__ = {
 "_edit_group_": true
 }
@@ -817,6 +817,7 @@ one_way_collision = true
 ]]
 editor/display_folded = true
 position = Vector2( -1520.77, 25.3587 )
+collision_layer = 4
 __meta__ = {
 "_edit_group_": true
 }
@@ -830,6 +831,7 @@ one_way_collision = true
 ]]
 editor/display_folded = true
 position = Vector2( -1457.37, 55.4319 )
+collision_layer = 4
 __meta__ = {
 "_edit_group_": true
 }
@@ -841,6 +843,7 @@ one_way_collision = true
 [node name="Tope1" type="StaticBody2D" parent="Background"]
 editor/display_folded = true
 position = Vector2( -1440.71, 92.6383 )
+collision_layer = 4
 __meta__ = {
 "_edit_group_": true
 }
@@ -851,6 +854,7 @@ shape = SubResource( 4 )
 [node name="Tope2" type="StaticBody2D" parent="Background"]
 editor/display_folded = true
 position = Vector2( -1377.37, 92.6383 )
+collision_layer = 4
 __meta__ = {
 "_edit_group_": true
 }
@@ -861,6 +865,7 @@ shape = SubResource( 4 )
 [node name="Tope3" type="StaticBody2D" parent="Background"]
 editor/display_folded = true
 position = Vector2( -1731.05, -75.2384 )
+collision_layer = 4
 __meta__ = {
 "_edit_group_": true
 }
@@ -873,6 +878,7 @@ shape = SubResource( 5 )
 ]]
 editor/display_folded = true
 position = Vector2( -1361.46, 54.6191 )
+collision_layer = 4
 __meta__ = {
 "_edit_group_": true
 }
@@ -887,6 +893,7 @@ one_way_collision = true
 ]]
 editor/display_folded = true
 position = Vector2( -1408.61, 87.1308 )
+collision_layer = 4
 __meta__ = {
 "_edit_group_": true
 }
@@ -901,6 +908,7 @@ one_way_collision = true
 ]]
 editor/display_folded = true
 position = Vector2( -858.428, 96.5601 )
+collision_layer = 4
 __meta__ = {
 "_edit_group_": true
 }
@@ -913,6 +921,7 @@ shape = SubResource( 7 )
 "player",
 ]]
 position = Vector2( 0, -23.883 )
+collision_mask = 4
 script = ExtResource( 2 )
 __meta__ = {
 "_edit_group_": true
@@ -924,7 +933,7 @@ texture = ExtResource( 4 )
 flip_h = true
 vframes = 4
 hframes = 10
-frame = 1
+frame = 2
 
 [node name="Collider" type="CollisionShape2D" parent="Player1"]
 position = Vector2( 0, 7.41563 )
@@ -949,4 +958,26 @@ anims/water_idle = SubResource( 17 )
 anims/water_walk = SubResource( 18 )
 
 [node name="bullet_point" type="Position2D" parent="Player1"]
+visible = false
 position = Vector2( 10.69, 0.93 )
+
+[node name="bullet_point2" type="Position2D" parent="Player1"]
+visible = false
+position = Vector2( 10.69, 10.18 )
+
+[node name="bullet_point3" type="Position2D" parent="Player1"]
+visible = false
+position = Vector2( 10.69, -12.16 )
+
+[node name="bullet_point4" type="Position2D" parent="Player1"]
+visible = false
+position = Vector2( 18.81, 14.74 )
+
+[node name="bullet_point5" type="Position2D" parent="Player1"]
+visible = false
+position = Vector2( 0, -21.79 )
+
+[node name="Cooldown" type="Timer" parent="Player1"]
+wait_time = 0.2
+one_shot = true
+[connection signal="timeout" from="Player1/Cooldown" to="Player1" method="_on_Cooldown_timeout"]
